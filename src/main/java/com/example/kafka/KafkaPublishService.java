@@ -66,5 +66,10 @@ public class KafkaPublishService implements PublishService {
     public int processed() {
         return processed.get() + failed.get();
     }
+
+    @Override
+    public int failure() {
+        return failed.get();
+    }
 }
 

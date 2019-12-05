@@ -12,4 +12,6 @@ public interface PublishService {
     Map<MetricName, ? extends Metric> metrics();
 
     int processed();
+
+    int failure();
 }

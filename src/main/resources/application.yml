@@ -4,3 +4,5 @@ kafka:
 logging:
   level:
     root: INFO
+  pattern:
+    console: "%msg%n"

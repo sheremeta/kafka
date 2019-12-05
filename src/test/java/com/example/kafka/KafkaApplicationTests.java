@@ -14,6 +14,8 @@ import org.testcontainers.containers.KafkaContainer;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class KafkaApplicationTests {
@@ -47,6 +49,8 @@ public class KafkaApplicationTests {
             TimeUnit.SECONDS.sleep(1);
         }
 
-        publishService.metrics().values().forEach(m -> LOGGER.info("{} : {}", m.metricName(), m.metricValue()));
+        assertThat(publishService.failure()).isEqualTo(0);
+
+        publishService.metrics().values().forEach(m -> LOGGER.info("{}, {} : {}", m.metricName().group(), m.metricName().description(), m.metricValue()));
     }
 }
