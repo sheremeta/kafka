@@ -1,0 +1,6 @@
+kafka:
+  topic: ${TOPIC}
+  bootstrapAddress: ${ADDRESS}
+logging:
+  level:
+    root: INFO
