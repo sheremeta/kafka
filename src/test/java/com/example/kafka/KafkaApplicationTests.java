@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.KafkaContainer;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -34,7 +35,7 @@ public class KafkaApplicationTests {
     private PublishService publishService;
 
     @Test
-    public void itsWorks() {
+    public void itsWorks() throws InterruptedException {
         int count = MESSAGE_COUNT;
 
         while (count-- > 0) {
@@ -42,7 +43,7 @@ public class KafkaApplicationTests {
         }
 
         while (publishService.processed() < MESSAGE_COUNT) {
-            //just wait
+            TimeUnit.SECONDS.sleep(1);
         }
 
         publishService.metrics().values().forEach(m -> LOGGER.info("{} : {}", m.metricName(), m.metricValue()));
