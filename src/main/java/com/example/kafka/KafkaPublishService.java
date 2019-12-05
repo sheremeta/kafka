@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.Metric;
 import org.apache.kafka.common.MetricName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class KafkaPublishService implements PublishService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaPublishService.class);
 
     private static ObjectMapper objectMapper;
 
@@ -35,7 +39,19 @@ public class KafkaPublishService implements PublishService {
     @Override
     public void publish(Payment payment) {
         try {
-            kafkaTemplate.send(topicName, payment.getId(), objectMapper.writeValueAsString(payment)).addCallback(stringStringSendResult -> processed.incrementAndGet(), throwable -> failed.incrementAndGet());
+            kafkaTemplate.send(topicName, payment.getId(), objectMapper.writeValueAsString(payment)).addCallback(
+                    result -> {
+                        processed.incrementAndGet();
+
+                        if (processed.get() > 10000 && processed.get() % 10000 == 0) {
+                            LOGGER.info("Processed: {}", processed.get());
+                        }
+
+                    }, throwable -> {
+                        failed.incrementAndGet();
+
+                        LOGGER.error("Failures: {}", failed.get());
+                    });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

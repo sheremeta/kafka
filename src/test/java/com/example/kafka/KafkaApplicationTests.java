@@ -19,8 +19,9 @@ import java.util.concurrent.TimeUnit;
 public class KafkaApplicationTests {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaApplicationTests.class);
+
     private static final String TOPIC_NAME = "messages";
-    private static final int MESSAGE_COUNT = 100000;
+    private static final int MESSAGE_COUNT = 1000000;
 
     @ClassRule
     public static KafkaContainer kafka = new KafkaContainer();
